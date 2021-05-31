@@ -1,30 +1,45 @@
 package subtask3
 
-import java.util.regex.Pattern
-
 class StringParser {
 
     // TODO: Complete the following function
     fun getResult(inputString: String): Array<String> {
-        var arrayList = mutableListOf<String>()
-        var array1 = mutableListOf<String>()
-        var array2 = mutableListOf<String>()
-        var array = arrayOf(String())
+        val array = arrayListOf<String>()
 
-        val pattern = Pattern.compile("(?:(?<=\\().+?(?=\\))|(?<=\\[).+?(?=\\]))|(?<=\\<).+?(?=>)")
-        val matcher = pattern.matcher(inputString)
-        while (matcher.find()) {
-            arrayList.add(matcher.group())
+        for (i in 0 until inputString.length) {
+            if (inputString[i] == '<') {
+                val startLine = inputString.substring(i + 1)
+                val endLine = searchIndex(startLine, inputString[i], '>')?.let { startLine.substring(0, it) }
+                array.add(endLine.toString())
+            }
+            if (inputString[i] == '(') {
+                val startLine = inputString.substring(i + 1)
+                val endLine = searchIndex(startLine, inputString[i], ')')?.let { startLine.substring(0, it) }
+                array.add(endLine.toString())
+            }
+            if (inputString[i] == '[') {
+                val startLine = inputString.substring(i + 1)
+                val endLine = searchIndex(startLine, inputString[i], ']')?.let { startLine.substring(0, it) }
+                array.add(endLine.toString())
+            }
         }
+        return   array.toTypedArray()
+    }
 
-        val finalString = java.lang.String.join(" ", arrayList)
-        val pattern1 = Pattern.compile("(?:(?<=\\().+?(?=\\))|(?<=\\[).+?(?=\\]))|(?<=\\<).+?(?=>)")
-        val matcher1 = pattern1.matcher(finalString)
-        while (matcher1.find()) {
-            arrayList.add(matcher1.group())
-            array1.add(matcher1.group())
+    fun searchIndex(s: String, start: Char, end: Char): Int? {
+        var count = 0
+        for (i in 0 until s.length) {
+            if (s[i] == start) {
+                count++
+            }
+            if (s[i] == end) {
+                if (count == 0) {
+                    return i
+                } else {
+                    count--
+                }
+            }
         }
-        array = arrayList.toTypedArray()
-        return array
+        return count
     }
 }
